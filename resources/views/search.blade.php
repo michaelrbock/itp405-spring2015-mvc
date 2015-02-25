@@ -1,13 +1,6 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>DVD Search</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
-</head>
-<body>
+@extends('layout')
 
-<div class="container">
-
+@section('content')
     <h1>DVD Search</h1>
 
     <form action="/dvds" method="get">
@@ -22,11 +15,11 @@
                 <option value="0">
                     All
                 </option>
-                <?php foreach($genres as $genre) : ?>
-                    <option value="<?php echo $genre->id ?>">
-                        <?php echo $genre->genre_name ?>
+                @foreach($genres as $genre)
+                    <option value="{{ $genre->id }}">
+                        {{ $genre->genre_name }}
                     </option>
-                <?php endforeach ?>
+                @endforeach
             </select>
         </div>
 
@@ -36,18 +29,14 @@
                 <option value="0">
                     All
                 </option>
-                <?php foreach($ratings as $rating) : ?>
-                    <option value="<?php echo $rating->id ?>">
-                        <?php echo $rating->rating_name ?>
+                @foreach($ratings as $rating)
+                    <option value="{{ $rating->id }}">
+                        {{ $rating->rating_name }}
                     </option>
-                <?php endforeach ?>
+                @endforeach
             </select>
         </div>
 
         <button type="submit" class="btn btn-default">Submit</button>
     </form>
-
-</div>
-
-</body>
-</html>
+@stop

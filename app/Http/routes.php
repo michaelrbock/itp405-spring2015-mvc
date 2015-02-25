@@ -15,4 +15,7 @@ Route::get('/', 'WelcomeController@index');
 
 Route::get('/dvds/search', 'DvdController@search');
 Route::get('/dvds', 'DvdController@results');
+Route::get('/dvds/{id}', 'DvdController@detail');
+Route::post('/dvds/{id}/reviews', 'DvdController@addReview');
+
 
