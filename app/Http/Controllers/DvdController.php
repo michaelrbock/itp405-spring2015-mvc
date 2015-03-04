@@ -3,27 +3,71 @@
 use Illuminate\Http\Request;
 use DB;
 use App\Models\Dvd;
+use App\Models\Format;
+use App\Models\Genre;
+use App\Models\Label;
+use App\Models\Rating;
 use App\Models\Review;
+use App\Models\Sound;
 
 class DvdController extends Controller {
 
     public function search()
     {
-        $genres = (new Dvd())->genres();
-        $ratings = (new Dvd())->ratings();
+        $genres = Genre::all();
+        $ratings = Rating::all();
         return view('search', [
             'genres' => $genres,
             'ratings' => $ratings
         ]);
     }
 
+    public function create()
+    {
+        $formats = Format::all();
+        $genres = Genre::all();
+        $labels = Label::all();
+        $ratings = Rating::all();
+        $sounds = Sound::all();
+
+        return view('create', [
+            'formats' => $formats,
+            'genres' => $genres,
+            'labels' => $labels,
+            'ratings' => $ratings,
+            'sounds' => $sounds
+        ]);
+    }
+
+    public function addDvd(Request $request)
+    {
+        $validation = Dvd::validate($request->all());
+
+        if ($validation->passes()) {
+            $dvd = new Dvd();
+            $dvd->title = $request->input('title');
+            $dvd->release_date = $request->input('release_date') . ' 00:00:00';
+            $dvd->label_id = $request->input('label_id');
+            $dvd->sound_id = $request->input('sound_id');
+            $dvd->genre_id = $request->input('genre_id');
+            $dvd->rating_id = $request->input('rating_id');
+            $dvd->save();
+
+            return redirect('/dvds/create')
+                ->with('success', 'Dvd successfully saved');
+        } else {
+            return redirect('/dvds/create')
+                ->withInput()
+                ->withErrors($validation);
+        }
+    }
 
     public function results(Request $request)
     {
         $dvds = (new Dvd())->search($request->input('title'), $request->input('genre_id'),
             $request->input('rating_id'));
-        $genres = (new Dvd())->genres();
-        $ratings = (new Dvd())->ratings();
+        $genres = Genre::all();
+        $ratings = Rating::all();
 
         return view('results', [
             'title' => $request->input('title'),
@@ -51,8 +95,6 @@ class DvdController extends Controller {
         $validation = Review::validate($request->all());
 
         if ($validation->passes()) {
-            // insert record into db
-            // redirect back to /songs/new
 
             Review::create([
                 'rating' => $request->input('rating'),
@@ -68,6 +110,23 @@ class DvdController extends Controller {
                 ->withInput()
                 ->withErrors($validation);
         }
+    }
+
+    public function dvdGenre($genre_name)
+    {
+        $genre = Genre::where('genre_name', '=', urldecode($genre_name))->firstOrFail();
+
+        $dvds = Dvd::with('rating', 'genre', 'label')
+            ->whereHas('genre', function($q) use ($genre)
+            {
+                $q->where('genre_id', '=', $genre->id);
+            })
+            ->get();
+
+        return view('genre', [
+            'genre' => $genre,
+            'dvds' => $dvds
+        ]);
     }
 
 }

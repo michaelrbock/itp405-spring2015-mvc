@@ -1,8 +1,22 @@
 <?php namespace App\Models;
 
 use DB;
+use Illuminate\Database\Eloquent\Model;
+use Validator;
 
-class Dvd {
+class Dvd extends Model {
+
+    public static function validate($input)
+    {
+        return $validation = Validator::make($input, [
+            'title' => 'required',
+            'release_date' => 'required|date',
+            'label_id' => 'required|integer',
+            'sound_id' => 'required|integer',
+            'genre_id' => 'required|integer',
+            'rating_id' => 'required|integer'
+        ]);
+    }
 
     public function search($title = '', $genre_id = '', $rating_id = '')
     {
@@ -66,15 +80,18 @@ class Dvd {
         return $query->get();
     }
 
-    public function genres()
+    public function rating()
     {
-        $query = DB::table('genres');
-        return $query->get();
+        return $this->belongsTo('App\Models\Rating');
     }
 
-    public function ratings()
+    public function genre()
     {
-        $query = DB::table('ratings');
-        return $query->get();
+        return $this->belongsTo('App\Models\Genre');
+    }
+
+    public function label()
+    {
+        return $this->belongsTo('App\Models\Label');
     }
 }
