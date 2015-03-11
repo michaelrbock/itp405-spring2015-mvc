@@ -9,6 +9,7 @@ use App\Models\Label;
 use App\Models\Rating;
 use App\Models\Review;
 use App\Models\Sound;
+use App\Services\RottenTomatoes;
 
 class DvdController extends Controller {
 
@@ -84,9 +85,14 @@ class DvdController extends Controller {
         $dvd = (new DVD())->getById($id);
         $reviews = (new DVD())->getReviewsByDvdId($id);
 
+        $rt_data = RottenTomatoes::search($dvd->title);
+
+        // dd($rt_data);
+
         return view('detail', [
             'dvd' => $dvd,
-            'reviews' => $reviews
+            'reviews' => $reviews,
+            'rt_data' => $rt_data
         ]);
     }
 
@@ -122,6 +128,8 @@ class DvdController extends Controller {
                 $q->where('genre_id', '=', $genre->id);
             })
             ->get();
+
+        // return $dvds;
 
         return view('genre', [
             'genre' => $genre,

@@ -21,9 +21,17 @@
         @foreach ($dvds as $dvd)
             <tr>
                 <td><a href="/dvds/{{ $dvd->id }}">{{ $dvd->title }}</a></td>
-                <td>{{ $dvd->rating->rating_name }}</td>
+                <td>
+                    @if ($dvd->rating)
+                        {{ $dvd->rating->rating_name }}
+                    @endif
+                </td>
                 <td>{{ $dvd->genre->genre_name }}</td>
-                <td>{{ $dvd->label->label_name }}</td>
+                <td>
+                    @if ($dvd->label)
+                        {{ $dvd->label->label_name }}
+                    @endif
+                </td>
             </tr>
         @endforeach
         </tbody>

@@ -37,6 +37,48 @@
         </table>
     </div>
 
+    @if ($rt_data)
+        <div class="row">
+            <h3>Rotten Tomatoes Data</h3>
+
+            <div class="col-xs-1">
+                <img src="{{ $rt_data->posters->thumbnail }}">
+            </div>
+
+            <div class="col-xs-6 col-xs-offset-2">
+                <table class="table table-striped">
+                    <thead>
+                        <th>Critic Score</th>
+                        <th>Audience Score</th>
+                        <th>Runtime</th>
+                    </thead>
+                    <tbody>
+                        <td>{{ $rt_data->ratings->critics_score }}</td>
+                        <td>{{ $rt_data->ratings->audience_score }}</td>
+                        <td>{{ $rt_data->runtime }} minutes</td>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="col-xs-2 col-xs-offset-1">
+                <table>
+                    <thead>
+                        <th>Cast</th>
+                    </thead>
+                    <tbody>
+                        @foreach ($rt_data->abridged_cast as $cast)
+                            <tr>
+                                <td>{{ $cast->name }}</td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    @endif
+
+    <hr>
+
     <div class="row">
         @foreach($errors->all() as $errorMessage)
             <div class="alert alert-danger" role="alert">
